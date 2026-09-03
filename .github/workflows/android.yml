@@ -52,6 +52,8 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -67,4 +69,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: apk/*.apk
-          generate_release_notes: true
+          name: Lintas ${{ github.ref_name }}
+          body: |
+            Automatic build of the Lintas Android app.
+
+            Download **app-release.apk** below and install it on your device to try Lintas.
