@@ -1,0 +1,23 @@
+# Android
+android/.gradle/
+android/local.properties
+android/**/build/
+android/captures/
+android/.idea/
+*.apk
+*.aab
+output.json
+
+# Kotlin
+*.iml
+
+# Backend
+backend/data/
+backend/__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Misc
+*.log
+.DS_Store

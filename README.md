@@ -1,1 +1,224 @@
-# lintas
+# Lintas
+
+**Simple File Transfer App**
+
+Send files instantly with a random code. No accounts, no cloud storage, no hassle.
+
+---
+
+## Overview
+
+Lintas is a lightweight peer-to-peer style file transfer system. The flow is simple:
+
+1. **Send** a file from the Android app
+2. **Get** a short transfer code
+3. **Share** the code with your recipient
+4. **Receive** the file by entering the code on another device
+
+The system consists of two components: an Android app and a Python backend that handles file storage and code generation.
+
+---
+
+## Architecture
+
+```
+┌──────────────┐        ┌──────────────────┐        ┌─────────────────┐
+│  Android App │◄──────►│  REST API Backend │◄──────►│  SQLite + Files │
+│  (Compose)   │  HTTP  │  (FastAPI)        │        │  (data/uploads) │
+└──────────────┘        └──────────────────┘        └─────────────────┘
+```
+
+---
+
+## Features
+
+- **Random Transfer Codes** — Unique `xxxxx-xxxxx` codes generated server-side
+- **24-Hour Expiration** — Files auto-delete after 24 hours
+- **No Accounts** — Fully anonymous, no sign-up required
+- **Any File Type** — Send documents, images, videos, archives, etc.
+- **Lightweight** — Minimal dependencies, fast to deploy
+
+---
+
+## Backend
+
+### Tech Stack
+
+- Python 3.11
+- FastAPI
+- SQLite
+- Uvicorn
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/upload` | Upload a file, receive a transfer code |
+| `GET` | `/api/transfer/{code}` | Get metadata for a transfer (file name, size, type) |
+| `GET` | `/api/download/{code}` | Download the actual file |
+
+### How to Run
+
+```bash
+cd backend
+pip install -r requirements.txt
+python -m uvicorn main:app --reload
+```
+
+The server runs on **port 8000** by default. Files are stored in `data/uploads/`.
+
+### Base URL
+
+```
+http://localhost:8000
+```
+
+---
+
+## Android App
+
+### Tech Stack
+
+- Kotlin
+- Jetpack Compose
+- Material 3 Design
+- Retrofit (HTTP client)
+
+### Configuration
+
+| Property | Value |
+|----------|-------|
+| Min SDK | 26 (Android 8.0) |
+| Target SDK | 34 (Android 14) |
+
+### How to Build
+
+1. Open the project in Android Studio
+2. Sync Gradle dependencies
+3. Connect a device or start an emulator
+4. Click **Run**
+
+### APK Output
+
+The debug APK can be found at:
+
+```
+app/build/outputs/apk/debug/app-debug.apk
+```
+
+---
+
+## Transfer Flow
+
+```
+Sender                          Backend                        Receiver
+  │                               │                               │
+  │  1. POST /api/upload          │                               │
+  │  ────────────────────────────►│                               │
+  │                               │  Store file                   │
+  │                               │  Generate code                │
+  │  ◄────────────────────────────│                               │
+  │  2. Receive code              │                               │
+  │                               │                               │
+  │  ──── Share code ────────────────────────────────────────────►│
+  │                               │                               │
+  │                               │  3. GET /api/transfer/{code}  │
+  │                               │  ◄────────────────────────────│
+  │                               │  4. Return file metadata      │
+  │                               │  ────────────────────────────►│
+  │                               │                               │
+  │                               │  5. GET /api/download/{code}  │
+  │                               │  ◄────────────────────────────│
+  │                               │  6. Return file data          │
+  │                               │  ────────────────────────────►│
+```
+
+---
+
+## Random Code System
+
+Transfer codes follow the format `xxxxx-xxxxx`:
+
+- **5 characters - 5 characters**, separated by a hyphen
+- Alphanumeric characters (`a-z`, `A-Z`, `0-9`)
+- **Case-sensitive** — `AbC12-xYz34` is different from `abc12-xyz34`
+- Generated **server-side** using Python's `secrets` module for cryptographic randomness
+- Codes are not sequential or predictable
+
+---
+
+## 24-Hour Expiration
+
+- Every uploaded file is assigned a timestamp
+- The server checks expiration on every access
+- Files older than **24 hours** are automatically rejected
+- A background cleanup process removes expired files from disk
+- Expiration is enforced **server-side** — the client cannot bypass it
+
+---
+
+## Security
+
+- **Predictable Code Prevention** — Codes are generated using `secrets`, not `random`, ensuring cryptographic randomness
+- **Server-Side Validation** — All file operations are validated on the backend before serving data
+- **No Sensitive Data Exposure** — Transfer codes are the only identifier; no user data is collected or stored
+- **File Type Safety** — Files are stored with generated names, preventing path traversal attacks
+- **Expiration Enforcement** — Expired files are inaccessible regardless of having the correct code
+
+---
+
+## Project Structure
+
+```
+lintas/
+├── .github/
+│   └── workflows/
+│       ├── android.yml          # Android CI workflow
+│       └── backend.yml          # Backend CI workflow
+├── backend/
+│   ├── data/
+│   │   └── uploads/             # Uploaded files storage
+│   ├── main.py                  # FastAPI application
+│   └── requirements.txt         # Python dependencies
+├── app/
+│   ├── src/
+│   │   └── main/
+│   │       └── java/
+│   │           └── com/lintas/
+│   │               └── MainActivity.kt
+│   ├── build.gradle.kts
+│   └── src/
+│       └── androidTest/
+│       └── test/
+├── build.gradle.kts             # Root Gradle build file
+├── gradle.properties
+├── gradlew
+├── gradlew.bat
+├── settings.gradle.kts
+└── README.md
+```
+
+---
+
+## Technologies Used
+
+| Component | Technology |
+|-----------|------------|
+| Android UI | Kotlin, Jetpack Compose, Material 3 |
+| HTTP Client | Retrofit |
+| Backend Framework | FastAPI |
+| Runtime | Python 3.11, Uvicorn |
+| Database | SQLite |
+| File Storage | Local filesystem |
+| CI/CD | GitHub Actions |
+| Code Generation | Python `secrets` module |
+
+---
+
+## Known Limitations
+
+- **Max File Size: 500MB** — Large files may cause memory issues on constrained devices
+- **SQLite** — Not suitable for high-concurrency deployments; consider PostgreSQL for production scale
+- **Single-Server Deployment** — No built-in load balancing or multi-server support
+- **No Encryption at Rest** — Files are stored unencrypted on the server disk
+- **No Authentication** — Anyone with a valid code can download the file
