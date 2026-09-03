@@ -4,6 +4,10 @@
 
 Send files instantly with a random code. No accounts, no cloud storage, no hassle.
 
+<p align="center">
+  <img src="assets/lintas-icon.png" alt="Lintas app icon" width="200"/>
+</p>
+
 ---
 
 ## Overview
