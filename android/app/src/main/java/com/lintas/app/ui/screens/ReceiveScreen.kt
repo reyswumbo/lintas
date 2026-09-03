@@ -401,7 +401,7 @@ fun ReceiveScreen(onBack: () -> Unit) {
                             verticalArrangement = Arrangement.Center
                         ) {
                             CircularProgressIndicator(
-                                progress = { progress },
+                                progress = progress,
                                 modifier = Modifier.size(80.dp),
                                 strokeWidth = 6.dp,
                                 trackColor = MaterialTheme.colorScheme.surfaceVariant
@@ -409,14 +409,13 @@ fun ReceiveScreen(onBack: () -> Unit) {
                             Spacer(modifier = Modifier.height(24.dp))
                             Text(
                                 text = "Downloading...",
-
                                 style = MaterialTheme.typography.headlineSmall.copy(
                                     fontWeight = FontWeight.SemiBold
                                 )
                             )
                             Spacer(modifier = Modifier.height(24.dp))
                             LinearProgressIndicator(
-                                progress = { progress },
+                                progress = progress,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(8.dp)

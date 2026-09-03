@@ -10,6 +10,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -316,7 +317,7 @@ fun SendScreen(onBack: () -> Unit) {
                             verticalArrangement = Arrangement.Center
                         ) {
                             CircularProgressIndicator(
-                                progress = { progress },
+                                progress = progress,
                                 modifier = Modifier.size(80.dp),
                                 strokeWidth = 6.dp,
                                 strokeCap = StrokeCap.Round,
@@ -337,7 +338,7 @@ fun SendScreen(onBack: () -> Unit) {
                             )
                             Spacer(modifier = Modifier.height(24.dp))
                             LinearProgressIndicator(
-                                progress = { progress },
+                                progress = progress,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(8.dp)
