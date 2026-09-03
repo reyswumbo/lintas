@@ -104,11 +104,18 @@ http://localhost:8000
 
 ### APK Output
 
-The debug APK can be found at:
+The app is built automatically by **GitHub Actions** (see [`.github/workflows/android.yml`](.github/workflows/android.yml)) on every push to `main`. Two APKs are produced as CI artifacts:
 
-```
-app/build/outputs/apk/debug/app-debug.apk
-```
+- **Release APK** — optimized (R8 minify + resource shrinking on), signed with a debug key so it is directly installable. Build locally with:
+  ```
+  ./gradlew assembleRelease
+  ```
+- **Debug APK** — full-featured debug build at:
+  ```
+  app/build/outputs/apk/debug/app-debug.apk
+  ```
+
+To distribute an installable APK to other users, create a `v*` git tag (e.g. `v1.0.0`). The CI workflow will build the release APK and attach it to a **GitHub Release**, which anyone can download from the repository's *Releases* page without a GitHub login.
 
 ---
 
