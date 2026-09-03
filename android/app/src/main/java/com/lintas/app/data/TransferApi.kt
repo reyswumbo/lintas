@@ -5,6 +5,8 @@ import android.net.Uri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -13,6 +15,8 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.util.concurrent.TimeUnit
 import com.lintas.app.util.Constants
 
@@ -82,8 +86,9 @@ class TransferApi(private var baseUrl: String = Constants.DEFAULT_BASE_URL) {
     suspend fun getTransferInfo(code: String): Result<TransferInfo> =
         withContext(Dispatchers.IO) {
             try {
+                val encoded = URLEncoder.encode(code.trim(), StandardCharsets.UTF_8.toString())
                 val request = Request.Builder()
-                    .url("$baseUrl/api/transfer/${code.trim()}")
+                    .url("$baseUrl/api/transfer/$encoded")
                     .get()
                     .build()
 
@@ -109,8 +114,9 @@ class TransferApi(private var baseUrl: String = Constants.DEFAULT_BASE_URL) {
     ): Result<Unit> =
         withContext(Dispatchers.IO) {
             try {
+                val encoded = URLEncoder.encode(code.trim(), StandardCharsets.UTF_8.toString())
                 val request = Request.Builder()
-                    .url("$baseUrl/api/download/${code.trim()}")
+                    .url("$baseUrl/api/download/$encoded")
                     .get()
                     .build()
 
@@ -153,9 +159,9 @@ class TransferApi(private var baseUrl: String = Constants.DEFAULT_BASE_URL) {
 
     private fun extractErrorMessage(body: String, fallback: String): String {
         return try {
-            val obj = json.parseToJsonElement(body)
-            val detail = obj.toString().substringAfter("\"detail\":\"").substringBeforeLast("\"")
-            if (detail.isNotEmpty() && detail != obj.toString()) detail else fallback
+            val obj = json.parseToJsonElement(body).jsonObject
+            val detail = obj["detail"]?.jsonPrimitive?.content
+            if (!detail.isNullOrEmpty()) detail else fallback
         } catch (_: Exception) {
             fallback
         }

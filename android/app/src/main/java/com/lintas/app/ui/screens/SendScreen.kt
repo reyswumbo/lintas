@@ -69,6 +69,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lintas.app.data.ServerConfig
 import com.lintas.app.data.TransferApi
 import com.lintas.app.util.FileUtils
 import kotlinx.coroutines.launch
@@ -85,7 +86,7 @@ sealed class UploadState {
 fun SendScreen(onBack: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val api = remember { TransferApi() }
+    val api = remember { TransferApi(ServerConfig.getBaseUrl(context)) }
 
     var selectedUri by remember { mutableStateOf<Uri?>(null) }
     var fileName by remember { mutableStateOf("") }

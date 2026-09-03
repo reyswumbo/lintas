@@ -63,6 +63,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lintas.app.data.ServerConfig
 import com.lintas.app.data.TransferApi
 import com.lintas.app.data.TransferInfo
 import com.lintas.app.util.FileUtils
@@ -85,7 +86,7 @@ sealed class ReceiveState {
 fun ReceiveScreen(onBack: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val api = remember { TransferApi() }
+    val api = remember { TransferApi(ServerConfig.getBaseUrl(context)) }
     val focusManager = LocalFocusManager.current
 
     var code by remember { mutableStateOf("") }
@@ -179,7 +180,12 @@ fun ReceiveScreen(onBack: () -> Unit) {
                                             scope.launch {
                                                 val result = api.getTransferInfo(code)
                                                 receiveState = if (result.isSuccess) {
-                                                    ReceiveState.Found(result.getOrNull()!!)
+                                                    val info = result.getOrNull()
+                                                    if (info != null) {
+                                                        ReceiveState.Found(info)
+                                                    } else {
+                                                        ReceiveState.Error("Transfer not found")
+                                                    }
                                                 } else {
                                                     ReceiveState.Error(
                                                         result.exceptionOrNull()?.message
@@ -207,7 +213,12 @@ fun ReceiveScreen(onBack: () -> Unit) {
                                         scope.launch {
                                             val result = api.getTransferInfo(code)
                                             receiveState = if (result.isSuccess) {
-                                                ReceiveState.Found(result.getOrNull()!!)
+                                                val info = result.getOrNull()
+                                                if (info != null) {
+                                                    ReceiveState.Found(info)
+                                                } else {
+                                                    ReceiveState.Error("Transfer not found")
+                                                }
                                             } else {
                                                 ReceiveState.Error(
                                                     result.exceptionOrNull()?.message

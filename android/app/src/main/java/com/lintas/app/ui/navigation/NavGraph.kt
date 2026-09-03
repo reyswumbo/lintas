@@ -11,11 +11,13 @@ import androidx.navigation.compose.rememberNavController
 import com.lintas.app.ui.screens.HomeScreen
 import com.lintas.app.ui.screens.ReceiveScreen
 import com.lintas.app.ui.screens.SendScreen
+import com.lintas.app.ui.screens.ServerSettingsScreen
 
 object Routes {
     const val HOME = "home"
     const val SEND = "send"
     const val RECEIVE = "receive"
+    const val SETTINGS = "settings"
 }
 
 @Composable
@@ -49,7 +51,8 @@ fun LintasNavGraph() {
         composable(Routes.HOME) {
             HomeScreen(
                 onSendClick = { navController.navigate(Routes.SEND) },
-                onReceiveClick = { navController.navigate(Routes.RECEIVE) }
+                onReceiveClick = { navController.navigate(Routes.RECEIVE) },
+                onSettingsClick = { navController.navigate(Routes.SETTINGS) }
             )
         }
         composable(Routes.SEND) {
@@ -57,6 +60,9 @@ fun LintasNavGraph() {
         }
         composable(Routes.RECEIVE) {
             ReceiveScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Routes.SETTINGS) {
+            ServerSettingsScreen(onBack = { navController.popBackStack() })
         }
     }
 }

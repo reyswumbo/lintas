@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,10 +16,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.GetApp
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,17 +40,22 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun HomeScreen(
     onSendClick: () -> Unit,
-    onReceiveClick: () -> Unit
+    onReceiveClick: () -> Unit,
+    onSettingsClick: () -> Unit
 ) {
     var visible by remember { mutableStateOf(false) }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
         AnimatedVisibility(
             visible = visible,
             enter = fadeIn(),
@@ -155,6 +163,19 @@ fun HomeScreen(
                     }
                 }
             }
+        }
+
+        IconButton(
+            onClick = onSettingsClick,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(8.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = "Server Settings",
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 

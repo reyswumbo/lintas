@@ -73,9 +73,13 @@ The server runs on **port 8000** by default. Files are stored in `data/uploads/`
 
 ### Base URL
 
+From the host machine the backend is reachable at:
+
 ```
 http://localhost:8000
 ```
+
+From an Android **emulator**, use `http://10.0.2.2:8000`. From a **physical device on the same Wi-Fi**, use the computer's LAN IP, e.g. `http://192.168.1.10:8000` (configure this in the app's Server Settings screen).
 
 ---
 
@@ -86,7 +90,24 @@ http://localhost:8000
 - Kotlin
 - Jetpack Compose
 - Material 3 Design
-- Retrofit (HTTP client)
+- OkHttp + kotlinx.serialization (HTTP client)
+
+### Server Connection
+
+The app connects to the backend over HTTP. Because the server URL depends on how you run the app, **Lintas lets you change the server URL from the app itself**:
+
+1. Open the app → tap the **gear icon** (top-right) on the Home screen.
+2. Enter the backend address and tap **Save**.
+
+The address depends on your setup:
+
+| Setup | Server URL |
+|--------|------------|
+| Android emulator | `http://10.0.2.2:8000` (default) |
+| Physical device, same Wi-Fi | `http://<computer-LAN-IP>:8000` |
+| Remote/public server | `http://<your-domain-or-ip>:8000` |
+
+> **Note:** The saved URL is stored on the device (SharedPreferences), so it persists across restarts. The default is `http://10.0.2.2:8000`, which only works for the Android emulator pointing at the host machine. For a physical device, always set the computer's LAN IP instead.
 
 ### Configuration
 
